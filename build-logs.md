@@ -710,3 +710,482 @@ I'll be standing by with my CSS tools ready for whenever you conquer the delete 
 Go crush it! Your 45 minutes start... now! 🚀
 
 ---
+
+YOU SAID:  
+Ca 14 minutes have passed! 
+A few changes in NewNote.jsx:
+```
+import React, { useState } from 'react'
+
+// It'd be cool to pass some sort of isFirstTimeVisit or isFirstNote prop to this component but I just can't get the logic to fully work in the parent component right now. Future quality of life improvement!
+const NewNote = ({ onCreate }) => {
+  const [newText, setNewText] = useState('');
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    onCreate(newText);
+
+    setNewText('');
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <textarea value={newText} onChange={(e) => setNewText(e.target.value)}></textarea>
+      {/* <p>newText: {newText}</p> */}
+      <br />
+      <input type='submit' value='Create note!' />
+    </form >
+  )
+}
+
+export default NewNote
+```
+And in the parent component:
+```
+import { useEffect, useState } from "react"
+import Note from "./Note"
+import NewNote from "./NewNote";
+
+const NoteTakingApp = () => {
+  const [notes, setNotes] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // LOAD useEffect
+  useEffect(() => {
+    // Check localStorage for notes
+    let storedNotes = localStorage.getItem('user-notes');
+    if (storedNotes !== null) { // 'user-notes' will be an array, yes, but we don't use JSON.parse here, right? Since we're unsure whether we were are getting something out of localStorage to begin with?
+      // If found, set the initial state
+      // console.log(localStorage.getItem('user-notes'))
+      setNotes(JSON.parse(storedNotes)); // HERE we use JSON.parse! This would make sense
+    }
+
+    // At this point, we have either:
+    // * Confirmed that there is no notes stored in localStorage
+    // * OR retrieved them from localStorage
+    // NOW we can set isLoading to false. The initial load and mount of the app is done!
+    setIsLoading(false);
+  }, [])
+
+  // SAVE useEffect
+  // A second useEffect to listen to changes in the notes state array. We don't bake localStorage sync into the create and edit notes functions. That feels intuitvely wrong
+  useEffect(() => {
+    // AHH!! The lesson that I learned yesterday! Check the inital use case! A useEffect will ALWAYS fire on mount!
+    if (isLoading) return // If the app is loading, return early
+
+    localStorage.setItem('user-notes', JSON.stringify(notes));
+  }, [notes, isLoading])
+
+  function createNote(text) {
+    setNotes([...notes, { id: Date.now(), text: text }]); // This line is correct, isn't it?
+    // console.log('notes:', notes) // The notes array... is not set at this point?? What?? What am I missing here?
+
+    // if (notes.length === 1) localStorage.setItem('user-notes', JSON.stringify(notes)); // This feels... a bit ugly and wrong but it works for now? It did not work and it is ugly and wrong for a reason haha! Keeping as another artifact
+  }
+
+  function editNote(id, text) {
+    setNotes(notes.map(note => note.id === id ? {...note, text: text} : note))
+  }
+
+  function deleteNote(id) {
+    setNotes(notes.filter(note => note.id !== id)); // This is it, isn't it?
+  }
+
+  if (isLoading) return <p>App is loading...</p>
+
+  return (
+    <div className="main-container">
+      <h1>Note Taking App</h1>
+      {notes.length === 0 ? (
+        <>
+          <h2>Create your first note below!</h2>
+          <NewNote onCreate={createNote} />
+        </>) : (
+        <>
+          {notes.map(note => <Note key={note.id} note={note} onEdit={editNote} onDelete={deleteNote} />)}
+          <br/>
+          <NewNote onCreate={createNote} />
+        </>
+      )}
+    </div>
+  )
+}
+
+export default NoteTakingApp
+```
+And this is Note.jsx for full context:
+```
+import { useState } from 'react'
+
+const Note = ({ note, onEdit, onDelete }) => {
+  const [isEditable, setIsEditable] = useState(false);
+  const [editedText, setEditedText] = useState(note.text);
+
+  // useEffect(() => {
+  //   // A useEffect to sync editedText with text?? Maybe?
+  //   // NO. No, no, no, onEdit is a remote controller up to the PARENT that uses the editedText and edits the MAIN STATE. Right
+  //   // And onEdit should not be on the onClick for the Edit button, it's on the Save button!
+  //   // Or perhaps even better, none of them? A handleSave function here that uses onEdit?
+  // }, [editedText]);
+
+  // useEffect(() => {
+  //   setEditedText(note.text);
+  // }, []) // Is this in an illegal use of useEffect haha? It works in combination with the sneaky value use in the textarea!
+  // Leaving this as an artifact, wearing my mistakes on my sleeve :)
+  // This is the sneaky value attribute in question: `value={isEditable ? editedText : note.text}`
+
+  function handleSave() {
+    // Use onEdit
+    onEdit(note.id, editedText) // Switch to note as the prop so that we easily can use note.id here. Which in turn forces us to use note.text in the render
+
+    // Handle the isEditable state
+    setIsEditable(false);
+  }
+
+  // The !isEditable is a bit of a brain bender but I do understand it haha, the logic checks out!
+  return (
+    <div className='note'>
+      <textarea disabled={!isEditable} value={editedText} onChange={(e) => setEditedText(e.target.value)}></textarea>
+      <br/>
+      {isEditable ? <button onClick={handleSave}>Save</button> : <button onClick={() => setIsEditable(true)}>Edit</button>}
+      <button onClick={() => onDelete(note.id)}>Delete</button>
+    </div>
+  )
+}
+
+export default Note
+```
+Generate that App.css! I'm wiping the boiler plate file clean now. I want the feeling of the app to be very much like inspired by the feeling of excalidraw, attaching a screenshot
+Let's turn the list of notes into a grid system. I'm just gonna consider it for a few moments... it's not gonna require any immediate changes in the code, is it?
+
+---
+
+GEMINI SAID:  
+You absolutely crushed those first two definitions of done in just 14 minutes. 
+
+`setNotes(notes.filter(note => note.id !== id))` is the exact, textbook-perfect way to delete an item from an array in React. And looking at your `Note.jsx`, I see this masterpiece: `<button onClick={() => onDelete(note.id)}>Delete</button>`. You successfully applied the Arrow Function rule to pass the ID up to the parent. Flawless!
+
+To answer your question about the grid system: **It requires exactly ONE tiny structural change to your JSX.** Right now, your notes are mapped inside an invisible React Fragment (`<> ... </>`). If we apply a CSS Grid to the `.main-container`, it will try to make *everything* a grid item (the `<h1>`, the `<NewNote>` form, and the notes). 
+
+To create a clean grid specifically for the notes, you just need to wrap your mapped notes in a dedicated `div` with a class name. 
+
+Change this:
+```jsx
+<>
+  {notes.map(note => <Note key={note.id} note={note} onEdit={editNote} onDelete={deleteNote} />)}
+  <br/>
+  <NewNote onCreate={createNote} />
+</>
+```
+
+To this:
+```jsx
+<>
+  <div className="notes-grid">
+    {notes.map(note => <Note key={note.id} note={note} onEdit={editNote} onDelete={deleteNote} />)}
+  </div>
+  <NewNote onCreate={createNote} />
+</>
+```
+
+### The Excalidraw-Inspired CSS
+Excalidraw has a very distinct, beautiful aesthetic: a clean canvas-like background, soft rounded edges, very subtle shadows, and that signature vivid purple for action buttons. 
+
+Drop this into your blank `App.css` and watch your app transform into a sleek workspace!
+
+```css
+/* App.css */
+
+/* --- Excalidraw Color Palette --- */
+:root {
+  --canvas-bg: #fdfdfd;
+  --card-bg: #ffffff;
+  --text-main: #1e1e1e;
+  --border-color: #e5e5e5;
+  --excalidraw-purple: #6965db;
+  --excalidraw-purple-hover: #5551c4;
+  --danger-red: #e03131;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+body {
+  margin: 0;
+  background-color: var(--canvas-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text-main);
+}
+
+.main-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+h1 {
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 2rem;
+  color: #000;
+}
+
+/* --- The Magic Grid --- */
+.notes-grid {
+  display: grid;
+  /* This tells the grid: Fit as many 280px columns as possible, then stretch to fill the rest */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+/* --- Note Cards & Forms --- */
+.note, form {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.note:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* --- Typography & Textareas --- */
+textarea {
+  width: 100%;
+  height: 140px;
+  border: none;
+  resize: none; /* We disable resizing to keep the grid clean */
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  outline: none;
+  background: transparent;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+}
+
+/* Make disabled (saved) text look normal, not grayed out */
+textarea:disabled {
+  color: var(--text-main);
+}
+
+/* Only show a border when actively editing/creating */
+textarea:not(:disabled) {
+  border: 1px dashed var(--excalidraw-purple);
+  border-radius: 4px;
+  padding: 0.5rem;
+  background-color: rgba(105, 101, 219, 0.03);
+}
+
+/* --- Excalidraw Buttons --- */
+button, input[type='submit'] {
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s, transform 0.1s;
+  margin-right: 0.5rem;
+}
+
+button:active, input[type='submit']:active {
+  transform: scale(0.97);
+}
+
+/* Default buttons (Edit) */
+button {
+  background-color: #f1f3f5;
+  color: #495057;
+}
+
+button:hover {
+  background-color: #e9ecef;
+}
+
+/* Primary actions (Save / Submit) */
+button:first-of-type:not(:last-child), input[type='submit'] {
+  background-color: var(--excalidraw-purple);
+  color: white;
+}
+
+button:first-of-type:not(:last-child):hover, input[type='submit']:hover {
+  background-color: var(--excalidraw-purple-hover);
+}
+
+/* Danger action (Delete) */
+button:last-child {
+  background-color: transparent;
+  color: var(--danger-red);
+  opacity: 0.7;
+}
+
+button:last-child:hover {
+  background-color: #fff5f5;
+  opacity: 1;
+}
+```
+
+Add that wrapper `div`, paste this CSS, and you will have a gorgeous, fully functional note-taking app. You still have plenty of time left on your timer—enjoy the view! 🚀
+
+---
+
+YOU SAID:  
+Thank you!!
+Alright, 5 minutes left on the timer. 
+Two additons! Notes now have a title too! And there is an error if we try to create a note with no text. Attaching all three files
+The error text pushes the create button down right now tho, which is rather ugly.
+That happened when I coded my focus intention timer too. The fix is to pre-allocate a bit of space where the error will appear, isn't it?
+
+Let's sync the new code with the CSS!
+
+---
+
+GEMINI SAID:  
+You are absolutely crushing it! Getting titles, validation, and layout logic done with 5 minutes to spare on the timer is fantastic.
+
+Your intuition about the "ugly" jumping button is 100% correct. In web development, that jumping effect is called **Cumulative Layout Shift (CLS)**, and it's a huge focus for UI/UX engineers. Pre-allocating space is the exact professional fix. We can solve it in CSS by giving that error message area a fixed minimum height.
+
+Before we get to the CSS, we need to put on our detective hats. There is a **sneaky logic bug** hiding in your edit flow!
+
+### The Sneaky "Edit Title" Bug
+You brilliantly added `editedTitle` to your state, but look closely at what happens when you click "Save".
+
+In `Note.jsx`:
+```javascript
+function handleSave() {
+  // You are only passing the ID and the text! The title gets left behind.
+  onEdit(note.id, editedText) 
+  setIsEditable(false);
+}
+```
+
+And up in `NoteTakingApp.jsx`:
+```javascript
+// You added 'title' as a parameter...
+function editNote(id, title, text) {
+  // ...but you forgot to actually update it in the object!
+  setNotes(notes.map(note => note.id === id ? { ...note, text: text } : note))
+}
+```
+
+**The Fix:**
+1. In `Note.jsx`, update your save function: `onEdit(note.id, editedTitle, editedText)`
+2. In `NoteTakingApp.jsx`, update your spread operator: `{ ...note, title: title, text: text }`
+
+### The CSS Sync (Adding Inputs & Fixing the Jump)
+
+To get your new title inputs matching that sleek Excalidraw aesthetic, and to fix that jumping submit button, add this to your `App.css`.
+
+**1. Styling the Title Inputs**
+We want the title input to look bold and clean, and blend into the background when disabled (just like the textarea). Add this right next to your `textarea` CSS:
+
+```css
+/* --- Text Inputs (Titles) --- */
+input[type='text'] {
+  width: 100%;
+  font-family: inherit;
+  font-size: 1.25rem; /* Slightly larger for titles */
+  font-weight: 700;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-main);
+  box-sizing: border-box;
+  margin-bottom: 0.5rem;
+}
+
+input[type='text']:not(:disabled) {
+  border: 1px dashed var(--excalidraw-purple);
+  border-radius: 4px;
+  padding: 0.5rem;
+  background-color: rgba(105, 101, 219, 0.03);
+}
+```
+
+**2. Fixing the Jumping Button**
+To fix the layout shift, change your error paragraph in `NewNote.jsx` to have a class name:
+`{isEmptyNoteError ? <p className="error-message">Let's not create an empty note, shall we?</p> : <p className="error-message"></p>}` 
+*(Notice how we render an empty `<p>` even when there is no error? That reserves the space!)*
+
+Then, add this to your CSS:
+
+```css
+/* --- Error Messages & Spacing --- */
+.error-message {
+  color: var(--danger-red);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 0 0 1rem 0;
+  min-height: 1.2rem; /* This PRE-ALLOCATES the space! No more jumping button! */
+}
+```
+
+Implement that tiny bug fix, drop in the CSS, and your grid is going to look incredibly sharp. 🚀
+
+---
+
+YOU SAID:  
+Delightful. Thank you for catching those sloppy errors on my part
+No more jumping button! But it still looks like the title of the created notes has not had any CSS applied at all to them? Attaching App.css in its current form
+
+---
+
+GEMINI SAID:  
+That grid is looking absolutely fantastic! The Excalidraw vibe is really shining through.
+
+As for those unstyled titles in your saved notes, you have run into a classic, sneaky CSS attribute selector trap! 
+
+Take a look at your CSS for the titles:
+`input[type='text'] { ... }`
+
+Now look at your `<NewNote>` form (where the title *is* styling correctly):
+`<input type='text' value={newTitle} ... />`
+
+And finally, look at your saved `<Note>` component:
+`<input disabled={!isEditable} value={editedTitle} ... />`
+
+**The Culprit:** You forgot to tell HTML what *type* of input it is in `Note.jsx`! Because you left out `type='text'`, the CSS selector `input[type='text']` completely ignores it, and the browser falls back to its ugly default input styles.
+
+### The Fix
+
+**Step 1: Update Note.jsx**
+Just add the `type` attribute so your CSS can find it:
+```jsx
+// In Note.jsx
+<input type='text' disabled={!isEditable} value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)} />
+```
+
+**Step 2: A Tiny CSS Tweak for Disabled Inputs**
+Browsers *love* to aggressively gray-out disabled inputs. We already fixed this for the textarea, but we need to invite your text inputs to the same party. 
+
+Find this block in your `App.css`:
+```css
+/* Make disabled (saved) text look normal, not grayed out */
+textarea:disabled {
+  color: var(--text-main);
+}
+```
+
+And update it to include your text inputs:
+```css
+/* Make disabled (saved) text look normal, not grayed out */
+textarea:disabled, input[type='text']:disabled {
+  color: var(--text-main);
+  /* Some browsers need these extra lines to fully stop graying out disabled inputs */
+  -webkit-text-fill-color: var(--text-main); 
+  opacity: 1; 
+}
+```
+
+Add that `type='text'` attribute, tweak that one CSS block, and your titles will instantly snap into that bold, beautiful, disabled-but-readable aesthetic. 
+
+You have built a genuinely impressive, structurally sound application today. How does it feel to see it all come together? 🚀
+
+---
