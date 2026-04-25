@@ -22,7 +22,7 @@ const NewNote = ({ onCreate }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input type='text' value={newTitle} onChange={(e) => setNewTitle(e.target.value)}/>
+      <input type='text' placeholder='Title' value={newTitle} onChange={(e) => setNewTitle(e.target.value)}/>
       <textarea value={newText} onChange={(e) => setNewText(e.target.value)}></textarea>
       {/* <p>newText: {newText}</p> */}
       {isEmptyNoteError ? <p className="error-message">Let's not create an empty note, shall we?</p> : <p className="error-message"></p>}
