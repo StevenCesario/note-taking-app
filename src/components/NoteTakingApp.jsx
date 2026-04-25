@@ -40,7 +40,7 @@ const NoteTakingApp = () => {
   }
 
   function editNote(id, text) {
-    setNotes(notes.map(note => note.id === id ? {...note, text: text} : note))
+    setNotes(notes.map(note => note.id === id ? { ...note, text: text } : note))
   }
 
   function deleteNote(id) {
@@ -58,8 +58,10 @@ const NoteTakingApp = () => {
           <NewNote onCreate={createNote} />
         </>) : (
         <>
-          {notes.map(note => <Note key={note.id} note={note} onEdit={editNote} onDelete={deleteNote} />)}
-          <br/>
+          <div className="notes-grid">
+            {notes.map(note => <Note key={note.id} note={note} onEdit={editNote} onDelete={deleteNote} />)}
+          </div>
+          <br />
           <NewNote onCreate={createNote} />
         </>
       )}

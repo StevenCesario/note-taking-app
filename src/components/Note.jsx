@@ -36,8 +36,4 @@ const Note = ({ note, onEdit, onDelete }) => {
   )
 }
 
-// Refresher and Lesson from mistake: onClick wants arrow functions! They're given a button to press when they feel the time is right
-// to call the function, they don't call the function immediately!
-// Nevermind!! The first one is NOT an arrow function? Why????
-
 export default Note

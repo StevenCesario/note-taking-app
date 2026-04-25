@@ -1,184 +1,136 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
+/* App.css */
 
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
+/* --- Excalidraw Color Palette --- */
+:root {
+  --canvas-bg: #fdfdfd;
+  --card-bg: #ffffff;
+  --text-main: #1e1e1e;
+  --border-color: #e5e5e5;
+  --excalidraw-purple: #6965db;
+  --excalidraw-purple-hover: #5551c4;
+  --danger-red: #e03131;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
+body {
+  margin: 0;
+  background-color: var(--canvas-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text-main);
 }
 
-#center {
+.main-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+h1 {
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 2rem;
+  color: #000;
+}
+
+/* --- The Magic Grid --- */
+.notes-grid {
+  display: grid;
+  /* This tells the grid: Fit as many 280px columns as possible, then stretch to fill the rest */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+/* --- Note Cards & Forms --- */
+.note, form {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
   display: flex;
   flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
 }
 
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
+.note:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-}
-
-#next-steps ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
-}
-
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
-}
-
-.ticks {
-  position: relative;
+/* --- Typography & Textareas --- */
+textarea {
   width: 100%;
+  height: 140px;
+  border: none;
+  resize: none; /* We disable resizing to keep the grid clean */
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  outline: none;
+  background: transparent;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+}
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
-  }
+/* Make disabled (saved) text look normal, not grayed out */
+textarea:disabled {
+  color: var(--text-main);
+}
 
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
-  }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
-  }
+/* Only show a border when actively editing/creating */
+textarea:not(:disabled) {
+  border: 1px dashed var(--excalidraw-purple);
+  border-radius: 4px;
+  padding: 0.5rem;
+  background-color: rgba(105, 101, 219, 0.03);
+}
+
+/* --- Excalidraw Buttons --- */
+button, input[type='submit'] {
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s, transform 0.1s;
+  margin-right: 0.5rem;
+}
+
+button:active, input[type='submit']:active {
+  transform: scale(0.97);
+}
+
+/* Default buttons (Edit) */
+button {
+  background-color: #f1f3f5;
+  color: #495057;
+}
+
+button:hover {
+  background-color: #e9ecef;
+}
+
+/* Primary actions (Save / Submit) */
+button:first-of-type:not(:last-child), input[type='submit'] {
+  background-color: var(--excalidraw-purple);
+  color: white;
+}
+
+button:first-of-type:not(:last-child):hover, input[type='submit']:hover {
+  background-color: var(--excalidraw-purple-hover);
+}
+
+/* Danger action (Delete) */
+button:last-child {
+  background-color: transparent;
+  color: var(--danger-red);
+  opacity: 0.7;
+}
+
+button:last-child:hover {
+  background-color: #fff5f5;
+  opacity: 1;
 }
