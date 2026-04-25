@@ -2,7 +2,7 @@ import React from 'react'
 
 const Note = ({ text }) => {
   return (
-    <textarea>
+    <textarea disabled>
       {text}
     </textarea>
   )

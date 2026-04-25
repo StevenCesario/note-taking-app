@@ -9,6 +9,10 @@ const NoteTakingApp = () => {
     // Check localStorage for notes
   }, [])
 
+  function createNote(text) {
+    setNotes([...notes, {id: Date.now(), text: text}]);
+  }
+
   return (
     <div className="main-container">
       <h1>Note Taking App</h1>
@@ -16,7 +20,7 @@ const NoteTakingApp = () => {
       {notes.length === 0 &&
         <>
           <h2>Create your first note below!</h2>
-          <NewNote />
+          <NewNote onCreate={createNote}/>
         </>}
     </div>
   )

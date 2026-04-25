@@ -1,12 +1,20 @@
 import React, { useState } from 'react'
 
-const NewNote = () => {
+const NewNote = ({ onCreate }) => {
   const [newText, setNewText] = useState('');
 
+  function handleSubmit(e) {
+    e.preventDefault();
+    onCreate(newText);
+  }
+
   return (
-    <div>
-      <textarea>TEXT</textarea>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <textarea value={newText} onChange={(e) => setNewText(e.target.value)}></textarea>
+      {/* <p>newText: {newText}</p> */}
+      <br />
+      <input type='submit' value='Create my first note!' />
+    </form >
   )
 }
 
