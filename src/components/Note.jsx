@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 const Note = ({ note, onEdit, onDelete }) => {
   const [isEditable, setIsEditable] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(note.title);
   const [editedText, setEditedText] = useState(note.text);
 
   // useEffect(() => {
@@ -28,7 +29,8 @@ const Note = ({ note, onEdit, onDelete }) => {
   // The !isEditable is a bit of a brain bender but I do understand it haha, the logic checks out!
   return (
     <div className='note'>
-      <textarea disabled={!isEditable} value={editedText} onChange={(e) => setEditedText(e.target.value)}></textarea>
+      <input disabled={!isEditable} value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)} />
+      <textarea disabled={!isEditable} value={editedText} onChange={(e) => setEditedText(e.target.value)} />
       <br/>
       {isEditable ? <button onClick={handleSave}>Save</button> : <button onClick={() => setIsEditable(true)}>Edit</button>}
       <button onClick={() => onDelete(note.id)}>Delete</button>
