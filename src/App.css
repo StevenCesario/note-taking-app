@@ -75,8 +75,11 @@ textarea {
 }
 
 /* Make disabled (saved) text look normal, not grayed out */
-textarea:disabled {
+textarea:disabled, input[type='text']:disabled {
   color: var(--text-main);
+  /* Some browsers need these extra lines to fully stop graying out disabled inputs */
+  -webkit-text-fill-color: var(--text-main); 
+  opacity: 1; 
 }
 
 /* Only show a border when actively editing/creating */

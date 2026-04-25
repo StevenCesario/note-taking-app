@@ -29,7 +29,7 @@ const Note = ({ note, onEdit, onDelete }) => {
   // The !isEditable is a bit of a brain bender but I do understand it haha, the logic checks out!
   return (
     <div className='note'>
-      <input disabled={!isEditable} value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)} />
+      <input type='text' disabled={!isEditable} value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)} />
       <textarea disabled={!isEditable} value={editedText} onChange={(e) => setEditedText(e.target.value)} />
       <br/>
       {isEditable ? <button onClick={handleSave}>Save</button> : <button onClick={() => setIsEditable(true)}>Edit</button>}
