@@ -10,18 +10,26 @@ const NoteTakingApp = () => {
   }, [])
 
   function createNote(text) {
-    setNotes([...notes, {id: Date.now(), text: text}]);
+    setNotes([...notes, { id: Date.now(), text: text }]);
+  }
+
+  function editNote(id, text) {
+    setNotes(notes.map(note => note.id === id ? {...note, text: text} : note))
   }
 
   return (
     <div className="main-container">
       <h1>Note Taking App</h1>
-      {notes.map(note => <Note text={note.text} />)}
-      {notes.length === 0 &&
+      {notes.map(note => <Note key={note.id} note={note} onEdit={editNote} />)}
+      {notes.length === 0 ? (
         <>
           <h2>Create your first note below!</h2>
-          <NewNote onCreate={createNote}/>
-        </>}
+          <NewNote onCreate={createNote} />
+        </>) : (
+        <>
+        
+        </>
+      )}
     </div>
   )
 }

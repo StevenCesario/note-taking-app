@@ -1,11 +1,41 @@
-import React from 'react'
+import { useEffect, useState } from 'react'
 
-const Note = ({ text }) => {
+const Note = ({ note, onEdit, onDelete }) => {
+  const [isEditable, setIsEditable] = useState(false);
+  const [editedText, setEditedText] = useState('');
+
+  // useEffect(() => {
+  //   // A useEffect to sync editedText with text?? Maybe?
+  //   // NO. No, no, no, onEdit is a remote controller up to the PARENT that uses the editedText and edits the MAIN STATE. Right
+  //   // And onEdit should not be on the onClick for the Edit button, it's on the Save button!
+  //   // Or perhaps even better, none of them? A handleSave function here that uses onEdit?
+  // }, [editedText]);
+
+  useEffect(() => {
+    setEditedText(note.text);
+  }, []) // Is this in an illegal use of useEffect haha? It works in combination with the sneaky value use in the textarea!
+
+  function handleSave() {
+    // Use onEdit
+    onEdit(note.id, editedText) // Switch to note as the prop so that we easily can use note.id here. Which in turn forces us to use note.text in the render
+
+    // Handle the isEditable state
+    setIsEditable(false);
+  }
+
+  // The !isEditable is a bit of a brain bender but I do understand it haha, the logic checks out!
   return (
-    <textarea disabled>
-      {text}
-    </textarea>
+    <div className='note'>
+      <textarea disabled={!isEditable} value={isEditable ? editedText : note.text} onChange={(e) => setEditedText(e.target.value)}></textarea>
+      <br/>
+      {isEditable ? <button onClick={handleSave}>Save</button> : <button onClick={() => setIsEditable(true)}>Edit</button>}
+      <button onClick={onDelete}>Delete</button>
+    </div>
   )
 }
+
+// Refresher and Lesson from mistake: onClick wants arrow functions! They're given a button to press when they feel the time is right
+// to call the function, they don't call the function immediately!
+// Nevermind!! The first one is NOT an arrow function? Why????
 
 export default Note
