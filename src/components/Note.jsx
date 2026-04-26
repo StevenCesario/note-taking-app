@@ -36,6 +36,8 @@ const Note = ({ note, onEdit, onSoftDelete, onRestore, onPermaDelete }) => {
       {isEditable ? <button onClick={handleSave}>Save</button> : <button onClick={() => setIsEditable(true)}>Edit</button>}
       {/* <p>isActive: {note.isActive ? 'True' : 'False'}</p> We can't "print a boolean", we gotta *use* the boolean haha. This works!! */}
       <button onClick={() => onSoftDelete(note.id)}>Trash</button>
+      {!note.isActive && <button onClick={onRestore}>Restore</button>}
+      {!note.isActive && <button onClick={onPermaDelete}>Permanently delete</button>}
     </div>
   )
 }

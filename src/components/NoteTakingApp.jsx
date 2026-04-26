@@ -58,7 +58,7 @@ const NoteTakingApp = () => {
     setNotes(notes.map(note => note.id === id ? {...note, isActive: false} : note)); // I believe this is it
   }
 
-  function RestoreNote(id) {
+  function restoreNote(id) {
     setNotes(notes.map(note => note.id === id ? {...note, isActive: true} : note)); // And the restore function is literally just the mirror haha!
   }
 
@@ -90,7 +90,7 @@ const NoteTakingApp = () => {
         )}
         {isTrashCanModalVisible && (
           <div className="modal-overlay">
-            <TrashCanModal notes={notes} onClose={handleTrashCanModalToggle} />
+            <TrashCanModal notes={notes} onClose={handleTrashCanModalToggle} onRestore={restoreNote} onPermaDelete={deleteNote} />
           </div>
         )}
       </div>

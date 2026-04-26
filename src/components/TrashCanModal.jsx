@@ -14,7 +14,7 @@ const TrashCanModal = ({ notes, onClose, onRestore, onPermaDelete }) => {
         {/* IT DOES! But the "trashed" note is still visible in the active view haha, we need to filter there for isActive to be true */}
       </div>
       <button type='button' onClick={onClose}>Close</button>
-      {/* TODO: Let the esc keyboard button act as an onClose too! */}
+      {/* Future TODO: Let the esc keyboard button act as an onClose too! */}
     </div>
   )
 }
