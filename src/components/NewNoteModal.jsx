@@ -28,7 +28,7 @@ const NewNoteModal = ({ onCreate, onCancel }) => {
       {/* <p>newText: {newText}</p> */}
       {isEmptyNoteError ? <p className="error-message">Let's not create an empty note, shall we?</p> : <p className="error-message"></p>}
       <input type='submit' value='Create note!' />
-      <button type='button' onClick={onCancel}>Cancel</button>
+      <button type='button' onClick={onCancel}>✕</button>
     </form >
   )
 }
