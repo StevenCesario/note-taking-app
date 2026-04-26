@@ -2086,3 +2086,142 @@ Apply those fixes, and you officially have a fully functioning, beautiful soft-d
 Take a breather, and let me know when you are ready to set your intention for the next block! 🚀
 
 ---
+
+YOU SAID:  
+Ready with my next intention for my next 45 min focus block!
+```
+Yes — sounds good, with one small precision tweak.
+
+Your first three items are crisp.
+“Anything else that might unexpectedly come up” is a little too open-ended to be part of the actual done-state.
+
+So I’d lock it like this:
+
+Focus Block
+
+• Sub-Quest: Sharpen software mastery through real building
+• Intention: Finish Trash Can soft delete system v1 and merge it
+• Definition of done:
+  1. Trash Can button in NoteTakingApp.jsx uses a trash SVG and sits bottom-right
+  2. trashed-note buttons correctly show Restore and Permanently delete
+  3. Create Note modal close button displays as just X, not “Cancel X”
+  4. any blocking bug directly preventing trash-can v1 from working is resolved
+  5. branch PR is ready and merged into main
+• Duration: 45 minutes
+• Difficulty: 4/5
+• Resistance: 1/5
+• Quest relevance: 5/5
+
+That keeps it clean:
+
+• finish the v1 loop
+• handle only bugs that block the loop
+• merge when done
+
+So yes — lock it in and go finish the system.
+```
+I'm attaching all the relevant CSS files. I'm not sure about Point 2 and 3 but Point 1 is *definitely* all CSS so please give the trash can SVG and placement fixes in NoteTakingApp.jsx to start off this 45 minute focus block, let's go! 🚀
+
+![45 minutes on the timer for the "Merge Feat/Trash can soft delete system v1 #3 into main" intention](screenshots/Screenshot_2026-04-26_16-37-01.png)
+
+---
+
+GEMINI SAID:  
+This is the perfect way to wrap up a feature. Tying up the loose ends, polishing the UI edge cases, and getting it securely merged into `main` before moving on to shiny new things is exactly how you prevent "prototype rot."
+
+Let's knock out these visual bugs so you can get that clean PR merge.
+
+### 1. The Floating Trash Can (Point 1)
+
+Right now, your trash button is just sitting at the bottom of the document flow. We want to rip it out and pin it to the bottom-right corner of the screen, completely independent of scrolling. 
+
+**Step 1: Update the JSX in `NoteTakingApp.jsx`**
+Replace your plain `<button>` at the very bottom with this. I have included a clean, Excalidraw-style inline SVG for the icon:
+
+```jsx
+<button className="floating-trash-btn" onClick={handleTrashCanModalToggle} aria-label="Open Trash">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 6h18"></path>
+    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+  </svg>
+</button>
+```
+
+**Step 2: Add the CSS to `NoteTakingApp.css`**
+This uses `position: fixed` to pin it, makes it a perfect circle, and adds a nice hover lift effect:
+
+```css
+/* --- Floating Trash Button --- */
+.floating-trash-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--card-bg);
+  color: var(--text-main);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  z-index: 100; /* Sits above the notes, but below the modal (1000) */
+  transition: transform 0.2s, box-shadow 0.2s, color 0.2s;
+}
+
+.floating-trash-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+  color: var(--danger-red);
+}
+```
+
+---
+
+### 2. The "Cancel X" Mystery (Point 3)
+
+I know exactly why this is happening! In the last block, I gave you a "clever" CSS trick to hide the word "Cancel" using `font-size: 0` and injecting an "✕" with the `::after` pseudo-element. Sometimes, browsers handle `font-size: 0` weirdly, resulting in both showing up.
+
+Let's ditch the CSS hack and do it the clean React way.
+
+**Step 1:** In `NewNoteModal.jsx`, change the button text directly:
+```jsx
+{/* Change this: */}
+<button type='button' onClick={onCancel}>Cancel</button>
+
+{/* To this: */}
+<button type='button' onClick={onCancel}>✕</button>
+```
+
+**Step 2:** Go into `NewNoteModal.css` and **delete** these two blocks entirely:
+```css
+/* DELETE THESE: */
+.modal-overlay button { font-size: 0; }
+.modal-overlay button::after { content: "✕"; font-size: 1.2rem; }
+```
+Now, it's just a regular button with an X inside it. No CSS ghosts!
+
+---
+
+### 3. The Mangled Trash Buttons (Point 2)
+
+If your "Restore" and "Permanently delete" buttons inside the trash modal are still looking like tiny little 'X's, it is because of that same CSS murder mystery from the end of the last block. 
+
+Ensure you applied this exact fix to `NewNoteModal.css`:
+
+```css
+/* Make sure your selector looks EXACTLY like this (using form > button:last-child) */
+.modal-overlay form > button:last-child {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  /* ... rest of the X styling ... */
+}
+```
+Because the `TrashCanModal` uses a `<div>` wrapper instead of a `<form>`, restricting that CSS rule to only target buttons *directly inside a form* will instantly free your Restore/Delete buttons from their curse.
+
+Apply those fixes, verify the loop works, and get that glorious `git merge main`! Let me know when the PR is closed! 🚀
+
+---
