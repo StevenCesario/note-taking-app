@@ -55,11 +55,11 @@ const NoteTakingApp = () => {
   }
 
   function softDeleteNote(id) {
-    setNotes(notes.map(note => note.id === id ? {...note, isActive: false} : note)); // I believe this is it
+    setNotes(notes.map(note => note.id === id ? { ...note, isActive: false } : note)); // I believe this is it
   }
 
   function restoreNote(id) {
-    setNotes(notes.map(note => note.id === id ? {...note, isActive: true} : note)); // And the restore function is literally just the mirror haha!
+    setNotes(notes.map(note => note.id === id ? { ...note, isActive: true } : note)); // And the restore function is literally just the mirror haha!
   }
 
   // It feels like we can refactor these two modal toggle functions into one? Future refactor
@@ -94,7 +94,13 @@ const NoteTakingApp = () => {
           </div>
         )}
       </div>
-      <button onClick={handleTrashCanModalToggle}>TRASH CAN</button>
+      <button className="floating-trash-btn" onClick={handleTrashCanModalToggle} aria-label="Open Trash">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 6h18"></path>
+          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+        </svg>
+      </button>
     </>
   )
 }
