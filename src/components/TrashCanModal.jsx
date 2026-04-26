@@ -1,4 +1,4 @@
-import React from 'react'
+import './TrashCanModal.css'
 import Note from './Note'
 
 const TrashCanModal = ({ notes, onClose, onRestore, onPermaDelete }) => {
