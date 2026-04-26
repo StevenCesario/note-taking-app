@@ -6,6 +6,9 @@ const Note = ({ note, onEdit, onSoftDelete, onRestore, onPermaDelete }) => {
   const [editedTitle, setEditedTitle] = useState(note.title);
   const [editedText, setEditedText] = useState(note.text);
 
+  // NEW: State to track the crumple animation
+  const [isTrashing, setIsTrashing] = useState(false);
+
   // useEffect(() => {
   //   // A useEffect to sync editedText with text?? Maybe?
   //   // NO. No, no, no, onEdit is a remote controller up to the PARENT that uses the editedText and edits the MAIN STATE. Right
@@ -27,11 +30,21 @@ const Note = ({ note, onEdit, onSoftDelete, onRestore, onPermaDelete }) => {
     setIsEditable(false);
   }
 
+  // NEW: The delay function
+  function handleTrashClick() {
+    setIsTrashing(true); // Triggers the CSS animation
+    
+    // Wait for the animation to finish (600ms) before updating the main state
+    setTimeout(() => {
+      onSoftDelete(note.id);
+    }, 650); 
+  }
+
   // The !isEditable is a bit of a brain bender but I do understand it haha, the logic checks out!
   return (
     <div 
-      // Conditionally apply the animation class ONLY if it's a newly created note
-      className={`note ${note.isNew ? 'animate-in' : ''}`} 
+      // Add the animate-out class conditionally
+      className={`note ${note.isNew ? 'animate-in' : ''} ${isTrashing ? 'animate-out' : ''}`} 
       style={{ 
         backgroundColor: note.color, 
         '--rotation': `${note.rotation}deg` 
@@ -44,7 +57,8 @@ const Note = ({ note, onEdit, onSoftDelete, onRestore, onPermaDelete }) => {
         <>
           {isEditable ? <button onClick={handleSave}>Save</button> : <button onClick={() => setIsEditable(true)}>Edit</button>}
           {/* <p>isActive: {note.isActive ? 'True' : 'False'}</p> We can't "print a boolean", we gotta *use* the boolean haha. This works!! */}
-          <button onClick={() => onSoftDelete(note.id)}>Trash</button>
+          {/* Use the new delay function instead of directly calling onSoftDelete */}
+          <button onClick={handleTrashClick}>Trash</button>
         </>
       )}
 
