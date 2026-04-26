@@ -6,13 +6,6 @@ const Note = ({ note, onEdit, onSoftDelete, onRestore, onPermaDelete }) => {
   const [editedTitle, setEditedTitle] = useState(note.title);
   const [editedText, setEditedText] = useState(note.text);
 
-  // A palette of classic pastel sticky note colors
-  const stickyColors = ['#fef08a', '#d73490', '#bbf7d0', '#5480b7', '#e9d5ff'];
-
-  // Memoize the random properties so they stick!
-  const randomColor = useMemo(() => stickyColors[Math.floor(Math.random() * stickyColors.length)], []);
-  const randomRotation = useMemo(() => Math.random() * 6 - 3, []); // Random tilt between -3 and 3 degrees
-
   // useEffect(() => {
   //   // A useEffect to sync editedText with text?? Maybe?
   //   // NO. No, no, no, onEdit is a remote controller up to the PARENT that uses the editedText and edits the MAIN STATE. Right
@@ -36,11 +29,12 @@ const Note = ({ note, onEdit, onSoftDelete, onRestore, onPermaDelete }) => {
 
   // The !isEditable is a bit of a brain bender but I do understand it haha, the logic checks out!
   return (
-    <div
-      className='note'
-      style={{
-        backgroundColor: randomColor,
-        '--rotation': `${randomRotation}deg` // Passing rotation to CSS via custom variable!
+    <div 
+      // Conditionally apply the animation class ONLY if it's a newly created note
+      className={`note ${note.isNew ? 'animate-in' : ''}`} 
+      style={{ 
+        backgroundColor: note.color, 
+        '--rotation': `${note.rotation}deg` 
       }}
     >
       <input type='text' disabled={!isEditable} value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)} />
