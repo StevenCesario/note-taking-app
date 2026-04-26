@@ -80,7 +80,7 @@ const NoteTakingApp = () => {
       <div className="main-container">
         <h1>Note Taking App</h1>
         <div className="notes-grid">
-          {notes.map(note => <Note key={note.id} note={note} onEdit={editNote} onSoftDelete={softDeleteNote} />)}
+          {notes.filter(note => note.isActive === true).map(note => <Note key={note.id} note={note} onEdit={editNote} onSoftDelete={softDeleteNote} />)}
           <span className="new-note-plus" onClick={handleNewNoteModalToggle}>+</span>
         </div>
         {isNewNoteModalVisible && (
