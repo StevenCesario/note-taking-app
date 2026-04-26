@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import './NoteTakingApp.css';
 import Note from "./Note";
 import NewNoteModal from "./NewNoteModal";
+import TrashCanModal from "./TrashCanModal";
 
 const NoteTakingApp = () => {
   const [notes, setNotes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isModalVisible, setIsModalVisible] = useState(false); // Feels like a good start
+  const [isNewNoteModalVisible, setIsNewNoteModalVisible] = useState(false); // Feels like a good start. Was a good start!
+  const [isTrashCanModalVisible, setIsTrashCanModalVisible] = useState(false);
 
   // LOAD useEffect
   useEffect(() => {
@@ -34,25 +36,39 @@ const NoteTakingApp = () => {
     localStorage.setItem('user-notes', JSON.stringify(notes));
   }, [notes, isLoading])
 
-  function createNote(title, text) {
-    setNotes([...notes, { id: Date.now(), title: title, text: text }]); // This line is correct, isn't it?
+  function createNote(title, text) { // isActive does not need to be part of the arguments!
+    setNotes([...notes, { id: Date.now(), title: title, text: text, isActive: true }]); // This line is correct, isn't it?
 
     // console.log('notes:', notes) // The notes array... is not set at this point?? What?? What am I missing here?
     // if (notes.length === 1) localStorage.setItem('user-notes', JSON.stringify(notes)); // This feels... a bit ugly and wrong but it works for now? It did not work and it is ugly and wrong for a reason haha! Keeping as another artifact
 
-    setIsModalVisible(false); // I believe we can use an explicit false here. "isModalVisible is not a function"? "Huuuhhhh?" Use the state function haha, silly mistake. Now it works as intended
+    setIsNewNoteModalVisible(false); // I believe we can use an explicit false here. "isModalVisible is not a function"? "Huuuhhhh?" Use the state function haha, silly mistake. Now it works as intended
   }
 
-  function editNote(id, title, text) {
+  function editNote(id, title, text) { // This function does NOT care about isActive :)
     setNotes(notes.map(note => note.id === id ? { ...note, title: title, text: text } : note))
   }
 
+  // This is now completely unknowingly in the past but consciously aware now in the present moment the perma delete function. And we'll create the soft delete function!
   function deleteNote(id) {
     setNotes(notes.filter(note => note.id !== id)); // This is it, isn't it?
   }
 
-  function handleModalToggle() {
-    setIsModalVisible(!isModalVisible); // Toggle for now until I can prove that manual true/false serves me more
+  function softDeleteNote(id) {
+    setNotes(notes.map(note => note.id === id ? { ...note, isActive: false } : note)); // I believe this is it
+  }
+
+  function restoreNote(id) {
+    setNotes(notes.map(note => note.id === id ? { ...note, isActive: true } : note)); // And the restore function is literally just the mirror haha!
+  }
+
+  // It feels like we can refactor these two modal toggle functions into one? Future refactor
+  function handleNewNoteModalToggle() {
+    setIsNewNoteModalVisible(!isNewNoteModalVisible); // Toggle for now until I can prove that manual true/false serves me more
+  }
+
+  function handleTrashCanModalToggle() {
+    setIsTrashCanModalVisible(!isTrashCanModalVisible);
   }
 
   if (isLoading) return <p>App is loading...</p>
@@ -60,18 +76,32 @@ const NoteTakingApp = () => {
   // I'm removing the {notes.length === 0 ? conditional rendering, we're gonna do a whole bunch of conditional rendering for the user's
   // first time visit instead, it's gonna be rad :)
   return (
-    <div className="main-container">
-      <h1>Note Taking App</h1>
-      <div className="notes-grid">
-        {notes.map(note => <Note key={note.id} note={note} onEdit={editNote} onDelete={deleteNote} />)}
-        <span className="new-note-plus" onClick={handleModalToggle}>+</span>
-      </div>
-      {isModalVisible && (
-        <div className="modal-overlay">
-          <NewNoteModal onCreate={createNote} onCancel={handleModalToggle} />
+    <>
+      <div className="main-container">
+        <h1>Note Taking App</h1>
+        <div className="notes-grid">
+          {notes.filter(note => note.isActive === true).map(note => <Note key={note.id} note={note} onEdit={editNote} onSoftDelete={softDeleteNote} />)}
+          <span className="new-note-plus" onClick={handleNewNoteModalToggle}>+</span>
         </div>
-      )}
-    </div>
+        {isNewNoteModalVisible && (
+          <div className="modal-overlay">
+            <NewNoteModal onCreate={createNote} onCancel={handleNewNoteModalToggle} />
+          </div>
+        )}
+        {isTrashCanModalVisible && (
+          <div className="modal-overlay">
+            <TrashCanModal notes={notes} onClose={handleTrashCanModalToggle} onRestore={restoreNote} onPermaDelete={deleteNote} />
+          </div>
+        )}
+      </div>
+      <button className="floating-trash-btn" onClick={handleTrashCanModalToggle} aria-label="Open Trash">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 6h18"></path>
+          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+        </svg>
+      </button>
+    </>
   )
 }
 

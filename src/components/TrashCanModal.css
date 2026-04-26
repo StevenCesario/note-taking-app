@@ -1,0 +1,39 @@
+/* TrashCanModal.css */
+
+.trash-can-container {
+  width: 90%;
+  max-width: 1100px;
+  max-height: 85vh; /* Prevents it from growing off-screen */
+  background-color: var(--canvas-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  position: relative;
+  
+  /* Enables scrolling inside the modal if you have lots of trash! */
+  overflow-y: auto; 
+}
+
+/* A specific close button for the Trash Can */
+.trash-can-container > button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: var(--danger-red);
+  color: white;
+  opacity: 1;
+}
+
+.trash-can-container > button:hover {
+  background-color: #c92a2a;
+}
+
+/* --- Empty State --- */
+.empty-trash-can {
+  text-align: center;
+  color: var(--text-main);
+  opacity: 0.5; /* Makes it feel soft and subtle */
+  font-weight: 500;
+  margin-top: 3rem; /* Pushes it down a bit into the empty space */
+  margin-bottom: 3rem;
+}

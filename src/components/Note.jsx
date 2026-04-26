@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './Note.css';
 
-const Note = ({ note, onEdit, onDelete }) => {
+const Note = ({ note, onEdit, onSoftDelete, onRestore, onPermaDelete }) => {
   const [isEditable, setIsEditable] = useState(false);
   const [editedTitle, setEditedTitle] = useState(note.title);
   const [editedText, setEditedText] = useState(note.text);
@@ -32,9 +32,21 @@ const Note = ({ note, onEdit, onDelete }) => {
     <div className='note'>
       <input type='text' disabled={!isEditable} value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)} />
       <textarea disabled={!isEditable} value={editedText} onChange={(e) => setEditedText(e.target.value)} />
-      <br/>
-      {isEditable ? <button onClick={handleSave}>Save</button> : <button onClick={() => setIsEditable(true)}>Edit</button>}
-      <button onClick={() => onDelete(note.id)}>Delete</button>
+      <br />
+      {note.isActive && (
+        <>
+          {isEditable ? <button onClick={handleSave}>Save</button> : <button onClick={() => setIsEditable(true)}>Edit</button>}
+          {/* <p>isActive: {note.isActive ? 'True' : 'False'}</p> We can't "print a boolean", we gotta *use* the boolean haha. This works!! */}
+          <button onClick={() => onSoftDelete(note.id)}>Trash</button>
+        </>
+      )}
+
+      {!note.isActive && (
+        <>
+          <button onClick={() => onRestore(note.id)}>Restore</button>
+          <button onClick={() => onPermaDelete(note.id)}>Permanently delete</button>
+        </>
+      )}
     </div>
   )
 }

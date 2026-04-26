@@ -45,8 +45,8 @@ form {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-/* Transform the Cancel button into an 'X' */
-.modal-overlay button {
+/* Moves the 'X' to the top right corner */
+.modal-overlay form > button:last-child {
   position: absolute;
   top: 1rem;
   right: 1rem;
@@ -67,13 +67,4 @@ form {
 .modal-overlay button:hover {
   background-color: #f1f3f5;
   opacity: 1;
-}
-
-/* Changes the text to an X without altering React code! */
-.modal-overlay button {
-  font-size: 0; 
-}
-.modal-overlay button::after {
-  content: "✕"; 
-  font-size: 1.2rem;
 }

@@ -33,3 +33,28 @@
   color: var(--excalidraw-purple);
   border-color: var(--excalidraw-purple);
 }
+
+/* --- Floating Trash Button --- */
+.floating-trash-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: var(--card-bg);
+  color: var(--text-main);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  z-index: 100; /* Sits above the notes, but below the modal (1000) */
+  transition: transform 0.2s, box-shadow 0.2s, color 0.2s;
+}
+
+.floating-trash-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+  color: var(--danger-red);
+}
