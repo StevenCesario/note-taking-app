@@ -16,8 +16,9 @@ const NoteTakingApp = () => {
     let storedNotes = localStorage.getItem('user-notes');
     if (storedNotes !== null) { // 'user-notes' will be an array, yes, but we don't use JSON.parse here, right? Since we're unsure whether we were are getting something out of localStorage to begin with?
       // If found, set the initial state
-      // console.log(localStorage.getItem('user-notes'))
-      setNotes(JSON.parse(storedNotes)); // HERE we use JSON.parse! This would make sense
+      // Parse the notes and ensure they don't trigger the "new" animation on load
+      const parsedNotes = JSON.parse(storedNotes).map(note => ({ ...note, isNew: false }));
+      setNotes(parsedNotes);
     }
 
     // At this point, we have either:
@@ -37,7 +38,19 @@ const NoteTakingApp = () => {
   }, [notes, isLoading])
 
   function createNote(title, text) { // isActive does not need to be part of the arguments!
-    setNotes([...notes, { id: Date.now(), title: title, text: text, isActive: true }]); // This line is correct, isn't it?
+    const stickyColors = ['#fef08a', '#d73490', '#bbf7d0', '#5480b7', '#e9d5ff'];
+    const randomColor = stickyColors[Math.floor(Math.random() * stickyColors.length)];
+    const randomRotation = Math.random() * 6 - 3;
+
+    setNotes([...notes, {
+      id: Date.now(),
+      title: title,
+      text: text,
+      isActive: true,
+      color: randomColor,         // Save the color!
+      rotation: randomRotation,   // Save the angle!
+      isNew: true                 // Flag it for animation!
+    }]);
 
     // console.log('notes:', notes) // The notes array... is not set at this point?? What?? What am I missing here?
     // if (notes.length === 1) localStorage.setItem('user-notes', JSON.stringify(notes)); // This feels... a bit ugly and wrong but it works for now? It did not work and it is ugly and wrong for a reason haha! Keeping as another artifact
@@ -78,7 +91,7 @@ const NoteTakingApp = () => {
   return (
     <>
       <div className="main-container">
-        <h1>Note Taking App</h1>
+        <h1>StickyNote</h1>
         <div className="notes-grid">
           {notes.filter(note => note.isActive === true).map(note => <Note key={note.id} note={note} onEdit={editNote} onSoftDelete={softDeleteNote} />)}
           <span className="new-note-plus" onClick={handleNewNoteModalToggle}>+</span>

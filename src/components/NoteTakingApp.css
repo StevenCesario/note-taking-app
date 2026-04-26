@@ -1,9 +1,16 @@
 /* NoteTakingApp.css */
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
 
 .main-container {
+  font-family: 'Kalam';
   max-width: 1100px;
   margin: 0 auto;
   padding: 3rem 2rem;
+}
+
+/* Ensure inputs and textareas inherit this cool new font */
+input, textarea, button {
+  font-family: inherit;
 }
 
 .notes-grid {
