@@ -46,7 +46,7 @@ form {
 }
 
 /* Transform the Cancel button into an 'X' */
-.modal-overlay button {
+.modal-overlay form > button:last-child {
   position: absolute;
   top: 1rem;
   right: 1rem;
