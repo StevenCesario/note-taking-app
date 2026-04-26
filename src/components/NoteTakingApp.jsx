@@ -36,8 +36,8 @@ const NoteTakingApp = () => {
     localStorage.setItem('user-notes', JSON.stringify(notes));
   }, [notes, isLoading])
 
-  function createNote(title, text) {
-    setNotes([...notes, { id: Date.now(), title: title, text: text }]); // This line is correct, isn't it?
+  function createNote(title, text) { // isActive does not need to be part of the arguments!
+    setNotes([...notes, { id: Date.now(), title: title, text: text, isActive: true }]); // This line is correct, isn't it?
 
     // console.log('notes:', notes) // The notes array... is not set at this point?? What?? What am I missing here?
     // if (notes.length === 1) localStorage.setItem('user-notes', JSON.stringify(notes)); // This feels... a bit ugly and wrong but it works for now? It did not work and it is ugly and wrong for a reason haha! Keeping as another artifact
@@ -45,7 +45,7 @@ const NoteTakingApp = () => {
     setIsNewNoteModalVisible(false); // I believe we can use an explicit false here. "isModalVisible is not a function"? "Huuuhhhh?" Use the state function haha, silly mistake. Now it works as intended
   }
 
-  function editNote(id, title, text) {
+  function editNote(id, title, text) { // This function does NOT care about isActive :)
     setNotes(notes.map(note => note.id === id ? { ...note, title: title, text: text } : note))
   }
 
