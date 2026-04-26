@@ -35,9 +35,11 @@ const NoteTakingApp = () => {
 
   function createNote(title, text) {
     setNotes([...notes, { id: Date.now(), title: title, text: text }]); // This line is correct, isn't it?
+    
     // console.log('notes:', notes) // The notes array... is not set at this point?? What?? What am I missing here?
-
     // if (notes.length === 1) localStorage.setItem('user-notes', JSON.stringify(notes)); // This feels... a bit ugly and wrong but it works for now? It did not work and it is ugly and wrong for a reason haha! Keeping as another artifact
+
+    setIsModalVisible(false); // I believe we can use an explicit false here. "isModalVisible is not a function"? "Huuuhhhh?" Use the state function haha, silly mistake. Now it works as intended
   }
 
   function editNote(id, title, text) {
