@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import './Note.css';
 
 const Note = ({ note, onEdit, onDelete }) => {
   const [isEditable, setIsEditable] = useState(false);

@@ -1,0 +1,35 @@
+/* NoteTakingApp.css */
+
+.main-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+/* --- The "New Note" Button Card --- */
+.new-note-plus {
+  background-color: transparent;
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 4rem;
+  color: var(--border-color);
+  cursor: pointer;
+  min-height: 200px; 
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.new-note-plus:hover {
+  background-color: rgba(105, 101, 219, 0.05);
+  color: var(--excalidraw-purple);
+  border-color: var(--excalidraw-purple);
+}

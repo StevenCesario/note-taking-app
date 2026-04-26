@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react"
-import Note from "./Note"
-import NewNote from "./NewNote";
+import { useEffect, useState } from "react";
+import './NoteTakingApp.css';
+import Note from "./Note";
+import NewNoteModal from "./NewNoteModal";
 
 const NoteTakingApp = () => {
   const [notes, setNotes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false); // Feels like a good start
 
   // LOAD useEffect
   useEffect(() => {
@@ -34,9 +36,11 @@ const NoteTakingApp = () => {
 
   function createNote(title, text) {
     setNotes([...notes, { id: Date.now(), title: title, text: text }]); // This line is correct, isn't it?
-    // console.log('notes:', notes) // The notes array... is not set at this point?? What?? What am I missing here?
 
+    // console.log('notes:', notes) // The notes array... is not set at this point?? What?? What am I missing here?
     // if (notes.length === 1) localStorage.setItem('user-notes', JSON.stringify(notes)); // This feels... a bit ugly and wrong but it works for now? It did not work and it is ugly and wrong for a reason haha! Keeping as another artifact
+
+    setIsModalVisible(false); // I believe we can use an explicit false here. "isModalVisible is not a function"? "Huuuhhhh?" Use the state function haha, silly mistake. Now it works as intended
   }
 
   function editNote(id, title, text) {
@@ -47,23 +51,25 @@ const NoteTakingApp = () => {
     setNotes(notes.filter(note => note.id !== id)); // This is it, isn't it?
   }
 
+  function handleModalToggle() {
+    setIsModalVisible(!isModalVisible); // Toggle for now until I can prove that manual true/false serves me more
+  }
+
   if (isLoading) return <p>App is loading...</p>
 
+  // I'm removing the {notes.length === 0 ? conditional rendering, we're gonna do a whole bunch of conditional rendering for the user's
+  // first time visit instead, it's gonna be rad :)
   return (
     <div className="main-container">
       <h1>Note Taking App</h1>
-      {notes.length === 0 ? (
-        <>
-          <h2>Create your first note below!</h2>
-          <NewNote onCreate={createNote} />
-        </>) : (
-        <>
-          <div className="notes-grid">
-            {notes.map(note => <Note key={note.id} note={note} onEdit={editNote} onDelete={deleteNote} />)}
-          </div>
-          <br />
-          <NewNote onCreate={createNote} />
-        </>
+      <div className="notes-grid">
+        {notes.map(note => <Note key={note.id} note={note} onEdit={editNote} onDelete={deleteNote} />)}
+        <span className="new-note-plus" onClick={handleModalToggle}>+</span>
+      </div>
+      {isModalVisible && (
+        <div className="modal-overlay">
+          <NewNoteModal onCreate={createNote} onCancel={handleModalToggle} />
+        </div>
       )}
     </div>
   )
