@@ -52,7 +52,7 @@ const NoteTakingApp = () => {
     setNotes(notes.filter(note => note.id !== id)); // This is it, isn't it?
   }
 
-  function handleModalToggle() {
+  function handleNewNoteModalToggle() {
     setIsNewNoteModalVisible(!isNewNoteModalVisible); // Toggle for now until I can prove that manual true/false serves me more
   }
 
@@ -61,18 +61,21 @@ const NoteTakingApp = () => {
   // I'm removing the {notes.length === 0 ? conditional rendering, we're gonna do a whole bunch of conditional rendering for the user's
   // first time visit instead, it's gonna be rad :)
   return (
-    <div className="main-container">
-      <h1>Note Taking App</h1>
-      <div className="notes-grid">
-        {notes.map(note => <Note key={note.id} note={note} onEdit={editNote} onDelete={deleteNote} />)}
-        <span className="new-note-plus" onClick={handleModalToggle}>+</span>
-      </div>
-      {isNewNoteModalVisible && (
-        <div className="modal-overlay">
-          <NewNoteModal onCreate={createNote} onCancel={handleModalToggle} />
+    <>
+      <div className="main-container">
+        <h1>Note Taking App</h1>
+        <div className="notes-grid">
+          {notes.map(note => <Note key={note.id} note={note} onEdit={editNote} onDelete={deleteNote} />)}
+          <span className="new-note-plus" onClick={handleNewNoteModalToggle}>+</span>
         </div>
-      )}
-    </div>
+        {isNewNoteModalVisible && (
+          <div className="modal-overlay">
+            <NewNoteModal onCreate={createNote} onCancel={handleNewNoteModalToggle} />
+          </div>
+        )}
+      </div>
+      {/* <button onClick={}>TRASH CAN</button> */}
+    </>
   )
 }
 
