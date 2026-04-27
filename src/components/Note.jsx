@@ -9,6 +9,33 @@ const Note = ({ note, onEdit, onSoftDelete, onRestore, onPermaDelete }) => {
   // NEW: State to track the crumple animation
   const [isTrashing, setIsTrashing] = useState(false);
 
+  // NEW: State to hold our dynamic throw coordinates
+  const [throwCoordinates, setThrowCoordinates] = useState({ x: 0, y: 0 });
+
+  // NEW: Calculate the exact trajectory!
+  function handleTrashClick(e) {
+    // 1. Get the GPS coordinates of the specific note we clicked
+    // e.currentTarget is the button, so we look at its parent (the note div)
+    const noteRect = e.currentTarget.closest('.note').getBoundingClientRect();
+    
+    // 2. Get the GPS coordinates of the Trash Can button
+    const trashBtn = document.querySelector('.floating-trash-btn');
+    const trashRect = trashBtn.getBoundingClientRect();
+
+    // 3. Calculate the difference in pixels
+    // We add a little offset so it aims for the center of the trash can, not the top-left edge
+    const travelX = trashRect.left - noteRect.left + 20; 
+    const travelY = trashRect.top - noteRect.top + 20;
+
+    // 4. Save coordinates and trigger the animation
+    setThrowCoordinates({ x: travelX, y: travelY });
+    setIsTrashing(true); 
+    
+    setTimeout(() => {
+      onSoftDelete(note.id);
+    }, 650); 
+  }
+
   // useEffect(() => {
   //   // A useEffect to sync editedText with text?? Maybe?
   //   // NO. No, no, no, onEdit is a remote controller up to the PARENT that uses the editedText and edits the MAIN STATE. Right
@@ -30,24 +57,16 @@ const Note = ({ note, onEdit, onSoftDelete, onRestore, onPermaDelete }) => {
     setIsEditable(false);
   }
 
-  // NEW: The delay function
-  function handleTrashClick() {
-    setIsTrashing(true); // Triggers the CSS animation
-    
-    // Wait for the animation to finish (600ms) before updating the main state
-    setTimeout(() => {
-      onSoftDelete(note.id);
-    }, 650); 
-  }
-
   // The !isEditable is a bit of a brain bender but I do understand it haha, the logic checks out!
   return (
     <div 
-      // Add the animate-out class conditionally
       className={`note ${note.isNew ? 'animate-in' : ''} ${isTrashing ? 'animate-out' : ''}`} 
       style={{ 
         backgroundColor: note.color, 
-        '--rotation': `${note.rotation}deg` 
+        '--rotation': `${note.rotation}deg`,
+        // NEW: Pass the dynamic coordinates to CSS!
+        '--fly-x': `${throwCoordinates.x}px`,
+        '--fly-y': `${throwCoordinates.y}px`
       }}
     >
       <input type='text' disabled={!isEditable} value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)} />

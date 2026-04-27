@@ -15,34 +15,32 @@
 /* The Crumple and Throw Animation */
 @keyframes crumpleAndThrow {
   0% {
-    /* Added translate(0, 0) as the anchor point */
     transform: translate(0, 0) rotate(var(--rotation)) scale(1);
     opacity: 1;
-    border-radius: 2px;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; 
   }
   40% {
-    /* Added translate(0, 0) here too */
     transform: translate(0, 0) rotate(calc(var(--rotation) - 25deg)) scale(0.6);
     border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
     box-shadow: inset 0 0 25px rgba(0,0,0,0.4);
     opacity: 0.9;
   }
   100% {
-    /* Now it knows exactly how to travel from 0 to 60vw! */
-    transform: translate(60vw, 60vh) rotate(360deg) scale(0);
+    /* Use the dynamically calculated GPS coordinates! */
+    transform: translate(var(--fly-x), var(--fly-y)) rotate(360deg) scale(0);
     opacity: 0;
   }
 }
 
 .note {
-  border-radius: 2px;
+  /* Replace the old border-radius with this: */
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  
   padding: 1.25rem;
   box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   aspect-ratio: 1 / 1; 
-  
-  /* The rotation and transition stay here */
   transform: rotate(var(--rotation));
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
@@ -79,4 +77,11 @@
 .note textarea {
   flex-grow: 1;
   resize: none; /* Prevents breaking the square shape */
+}
+
+/* Lock sticky note text to dark gray regardless of theme */
+.note input[type='text'], 
+.note textarea {
+  color: #1e1e1e;
+  -webkit-text-fill-color: #1e1e1e; /* Required to override the disabled state! */
 }
