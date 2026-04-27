@@ -5,6 +5,7 @@ import NewNoteModal from "./NewNoteModal";
 import TrashCanModal from "./TrashCanModal";
 
 const NoteTakingApp = () => {
+  const [theme, setTheme] = useState(localStorage.getItem('app_theme') || 'light');
   const [notes, setNotes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isNewNoteModalVisible, setIsNewNoteModalVisible] = useState(false); // Feels like a good start. Was a good start!
@@ -37,19 +38,22 @@ const NoteTakingApp = () => {
     localStorage.setItem('user-notes', JSON.stringify(notes));
   }, [notes, isLoading])
 
-  function createNote(title, text) { // isActive does not need to be part of the arguments!
-    const stickyColors = ['#fef08a', '#d73490', '#bbf7d0', '#5480b7', '#e9d5ff'];
-    const randomColor = stickyColors[Math.floor(Math.random() * stickyColors.length)];
-    const randomRotation = Math.random() * 6 - 3;
+  // LIGHT/DARK MODE useEffect
+  useEffect(() => {
+    localStorage.setItem('app_theme', theme);
+    document.body.className = theme;
+  }, [theme]);
 
-    setNotes([...notes, {
-      id: Date.now(),
-      title: title,
-      text: text,
+  // Update the parameters to accept color and rotation
+  function createNote(title, text, color, rotation) { // isActive does not need to be part of the arguments!
+    setNotes([...notes, { 
+      id: Date.now(), 
+      title: title, 
+      text: text, 
       isActive: true,
-      color: randomColor,         // Save the color!
-      rotation: randomRotation,   // Save the angle!
-      isNew: true                 // Flag it for animation!
+      color: color,         // Use the passed color
+      rotation: rotation,   // Use the passed rotation
+      isNew: true                 
     }]);
 
     // console.log('notes:', notes) // The notes array... is not set at this point?? What?? What am I missing here?
@@ -84,6 +88,10 @@ const NoteTakingApp = () => {
     setIsTrashCanModalVisible(!isTrashCanModalVisible);
   }
 
+  function handleThemeToggle() {
+    theme === 'light' ? setTheme('dark') : setTheme('light');
+  }
+
   if (isLoading) return <p>App is loading...</p>
 
   // I'm removing the {notes.length === 0 ? conditional rendering, we're gonna do a whole bunch of conditional rendering for the user's
@@ -107,6 +115,25 @@ const NoteTakingApp = () => {
           </div>
         )}
       </div>
+      <button className="floating-theme-btn" onClick={handleThemeToggle} aria-label="Switch between Ligth Mode and Dark Mode">
+        {theme === 'light' ? (
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        )}
+      </button>
       <button className="floating-trash-btn" onClick={handleTrashCanModalToggle} aria-label="Open Trash">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M3 6h18"></path>

@@ -1,7 +1,15 @@
 /* index.css */
 
-/* --- Excalidraw Color Palette --- */
-:root {
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+html {
+  /* The default is usually 16px. 18px gives a nice, readable bump! */
+  font-size: 18px; 
+}
+
+/* --- Theme Variables --- */
+body, body.light {
+  /* Light Mode / Original Excalidraw Colors */
   --canvas-bg: #fdfdfd;
   --card-bg: #ffffff;
   --text-main: #1e1e1e;
@@ -9,22 +17,54 @@
   --excalidraw-purple: #6965db;
   --excalidraw-purple-hover: #5551c4;
   --danger-red: #e03131;
+  --danger-red-hover: #fff5f5;
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  
+  /* Button specific variables */
+  --btn-default-bg: #f1f3f5;
+  --btn-default-text: #495057;
+  --btn-default-hover: #e9ecef;
 }
 
+body.dark {
+  /* Dark Mode Overrides */
+  --canvas-bg: #121212;
+  --card-bg: #1e1e1e;
+  --text-main: #e9ecef;
+  --border-color: #343a40;
+  
+  /* Adjusted accents for better contrast on dark backgrounds */
+  --excalidraw-purple: #8b87f0; 
+  --excalidraw-purple-hover: #a19ef5;
+  --danger-red: #ff6b6b; 
+  --danger-red-hover: #3b1b1b; 
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+
+  /* Button specific variables */
+  --btn-default-bg: #2b2b2b;
+  --btn-default-text: #ced4da;
+  --btn-default-hover: #3b3b3b;
+}
+
+/* --- Base Styles --- */
 body {
   margin: 0;
   background-color: var(--canvas-bg);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* Apply Patrick Hand with fallbacks! */
+  font-family: 'Patrick Hand', cursive, -apple-system, sans-serif;
   color: var(--text-main);
+  /* Smooth transition for theme toggling */
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1 {
   font-weight: 800;
   letter-spacing: -0.5px;
   margin-bottom: 2rem;
-  color: #000;
+  /* Changed from hardcoded #000 so it flips to white in Dark Mode */
+  color: var(--text-main); 
 }
 
 /* --- Shared Typography & Inputs --- */
@@ -40,6 +80,7 @@ textarea {
   background: transparent;
   box-sizing: border-box;
   margin-bottom: 1rem;
+  color: var(--text-main);
 }
 
 input[type='text'] {
@@ -86,12 +127,12 @@ button:active, input[type='submit']:active {
 
 /* Default buttons (Edit) */
 button {
-  background-color: #f1f3f5;
-  color: #495057;
+  background-color: var(--btn-default-bg);
+  color: var(--btn-default-text);
 }
 
 button:hover {
-  background-color: #e9ecef;
+  background-color: var(--btn-default-hover);
 }
 
 /* Primary actions (Save / Submit) */
@@ -112,6 +153,6 @@ button:last-child {
 }
 
 button:last-child:hover {
-  background-color: #fff5f5;
+  background-color: var(--danger-red-hover);
   opacity: 1;
 }
