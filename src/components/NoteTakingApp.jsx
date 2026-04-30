@@ -80,13 +80,18 @@ const NoteTakingApp = () => {
     setNotes(notes.map(note => note.id === id ? { ...note, isActive: true } : note)); // And the restore function is literally just the mirror haha!
   }
 
-  // It feels like we can refactor these two modal toggle functions into one? Future refactor. They *might* still be able to be mashed together haha! With some sort of argument
-  function handleNewNoteModalToggle() {
-    setCurrentlyVisibleModal('NewNote');
-  }
+  // // It feels like we can refactor these two modal toggle functions into one? Future refactor. They *might* still be able to be mashed together haha! With some sort of argument
+  // function handleNewNoteModalToggle() {
+  //   setCurrentlyVisibleModal('NewNote');
+  // }
 
-  function handleTrashCanModalToggle() {
-    setCurrentlyVisibleModal('TrashCan');
+  // function handleTrashCanModalToggle() {
+  //   setCurrentlyVisibleModal('TrashCan');
+  // }
+
+  // Shamelessly taking the function that my React coach gave me haha
+  function openModal(modalName) {
+    setCurrentlyVisibleModal(modalName);
   }
 
   // The problem now... is onClose and onCancel, which earlier called upon these. We can't close the modals now
@@ -108,7 +113,7 @@ const NoteTakingApp = () => {
         <h1>StickyNote</h1>
         <div className="notes-grid">
           {notes.filter(note => note.isActive === true).map(note => <Note key={note.id} note={note} onEdit={editNote} onSoftDelete={softDeleteNote} />)}
-          <span className="new-note-plus" onClick={handleNewNoteModalToggle}>+</span>
+          <span className="new-note-plus" onClick={() => openModal('NewNote')}>+</span>
         </div>
         {currentlyVisibleModal === 'NewNote' && (
           <div className="modal-overlay">
@@ -140,7 +145,7 @@ const NoteTakingApp = () => {
           </svg>
         )}
       </button>
-      <button className="floating-trash-btn" onClick={handleTrashCanModalToggle} aria-label="Open Trash">
+      <button className="floating-trash-btn" onClick={() => openModal('TrashCan')} aria-label="Open Trash">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M3 6h18"></path>
           <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
